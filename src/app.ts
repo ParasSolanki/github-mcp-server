@@ -11,11 +11,12 @@ import {
   searchRepositoriesInputSchema,
 } from "./tools/search-repositories.js";
 import { SEARCH_REPOSITORIES_TOOL, tools } from "./tool.ts";
+import { VERSION } from "./constants.js";
 
 const server = new Server(
   {
     name: "Github MCP Server",
-    version: "1.0.0",
+    version: VERSION,
   },
   {
     capabilities: {
