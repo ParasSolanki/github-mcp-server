@@ -70,3 +70,9 @@ pnpm dev
 ```shell
 pnpm build
 ```
+
+5. Local debugging with inspector:
+
+```shell
+pnpm inspector
+```
