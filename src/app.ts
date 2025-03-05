@@ -33,6 +33,11 @@ import {
   listPullRequests,
   listPullRequestsInputSchema,
 } from "./tools/list-pull-requests.ts";
+import {
+  SEARCH_ISSUES_TOOL,
+  searchIssues,
+  searchIssuesInputSchema,
+} from "./tools/search-issues.ts";
 
 const server = new Server(
   { name: "Github MCP Server", version: VERSION },
@@ -40,7 +45,9 @@ const server = new Server(
 );
 
 export const tools = [
+  // search
   SEARCH_REPOSITORIES_TOOL,
+  SEARCH_ISSUES_TOOL,
 
   // issues
   GET_ISSUE_TOOL,
@@ -192,6 +199,31 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
+    if (name === SEARCH_ISSUES_TOOL.name) {
+      const input = searchIssuesInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await searchIssues(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
     throw new Error(`Unknown tool: ${name}`);
   } catch (error) {
     return {
