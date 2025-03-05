@@ -6,14 +6,30 @@ import { err, ok } from "neverthrow";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 
+// @see https://docs.github.com/en/rest/search/search#search-repositories search repositories API docs
+
 export const searchRepositoriesInputSchema = z.object({
   query: z
     .string()
-    .describe("The query to search for (see Github search query syntax)"),
+    .describe(
+      "The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. (see Github search query syntax)",
+    ),
   page: z.number().describe("Page number for pagination (default: 1)"),
   per_page: z
     .number()
     .describe("Number of results per page (default: 30, max: 100)"),
+  sort: z
+    .enum(["stars", "forks", "help-wanted-issues", "updated"])
+    .optional()
+    .describe(
+      "Sorts the results of your query by the number of stars, forks, or help-wanted-issues or how recently the items were updated. Default: best match",
+    ),
+  order: z
+    .enum(["asc", "desc"])
+    .optional()
+    .describe(
+      "Determines whether the first search result returned is the highest number of matches (desc) or lowest number of matches (asc). This parameter is ignored unless you provide sort. (default: desc)",
+    ),
 });
 
 export const SEARCH_REPOSITORIES_TOOL: Tool = {
