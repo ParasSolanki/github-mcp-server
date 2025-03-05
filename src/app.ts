@@ -38,6 +38,11 @@ import {
   searchIssues,
   searchIssuesInputSchema,
 } from "./tools/search-issues.ts";
+import {
+  SEARCH_CODE_TOOL,
+  searchCode,
+  searchCodeInputSchema,
+} from "./tools/search-code.ts";
 
 const server = new Server(
   { name: "Github MCP Server", version: VERSION },
@@ -48,6 +53,7 @@ export const tools = [
   // search
   SEARCH_REPOSITORIES_TOOL,
   SEARCH_ISSUES_TOOL,
+  SEARCH_CODE_TOOL,
 
   // issues
   GET_ISSUE_TOOL,
@@ -224,6 +230,33 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         ],
       };
     }
+
+    if (name === SEARCH_CODE_TOOL.name) {
+      const input = searchCodeInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await searchCode(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
+
     throw new Error(`Unknown tool: ${name}`);
   } catch (error) {
     return {
