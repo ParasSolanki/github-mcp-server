@@ -38,22 +38,100 @@ Provides integration with Github through MCP, allowing LLMs to interact with it.
 1.  `search_repositories`: Search GitHub for a repository.
 
     - Required inputs:
-      - `query` (string): The query to search for repository
-      - `page` (number, default: 30, max: 100): Page number for pagination
-      - `per_page` (number, default: 30, max: 100): Number of results per page
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 30, max: 100): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
 
-2.  `get_issue`: Get an issue from a repository.
+2.  `search_issues`: Search issues from a repository.
 
     - Required inputs:
-      - `owner` (string): The owner of the repository
-      - `repo` (string): The repository name
-      - `issue_number` (number): The issue number
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 1): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
+      - `order` (optional string, default: `desc`): Sort of order (`asc` or `desc`).
+      - `sort` (optional string, default: `best match`): Sort field (can be one of: `comments`, `reactions`, `reactions-+1`, `reactions--1`, `reactions-smile`, `reactions-thinking_face`, `reactions-heart`, `reactions-tada`, `interactions`, `created` or `updated`).
 
-3.  `get_pull_request`: Get a pull request from a repository.
+3.  `search_commits`: Search commits from a repository.
+
     - Required inputs:
-      - `owner` (string): The owner of the repository
-      - `repo` (string): The repository name
-      - `pull_request_number` (number): The pull request number
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 1): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
+      - `order` (optional string, default: `desc`): Sort of order (`asc` or `desc`).
+      - `sort` (optional string, default: `best match`): Sort field (can be one of: `committer-date` or `author-date`).
+
+4.  `search_code`: Search code from a repository.
+
+    - Required inputs:
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 1): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
+
+5.  `search_users`: Search users from a repository.
+
+    - Required inputs:
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 1): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
+      - `order` (optional string, default: `desc`): Sort of order (`asc` or `desc`).
+      - `sort` (optional string, default: `best match`): Sort field (can be one of: `followers`, `repositories` or `joined`).
+
+6.  `search_topics`: Search topics.
+
+    - Required inputs:
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 1): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
+
+7.  `search_labels`: Search labels in a repository.
+
+    - Required inputs:
+      - `query` (string): The query to search for repository.
+      - `page` (number, default: 1): Page number for pagination.
+      - `per_page` (number, default: 30, max: 100): Number of results per page.
+      - `order` (optional string, default: `desc`): Sort of order (`asc` or `desc`).
+      - `sort` (optional string, default: `best match`): Sort field (can be one of: `created` or `updated`).
+
+8.  `list_repositories_issues`: List issues from a repository.
+
+    - Required inputs:
+      - `owner` (string): The owner of the repository.
+      - `repo` (string): The repository name.
+      - `page` (optional number, default: 1): Page number for pagination.
+      - `per_page` (optional number, default: 30, max: 100): Number of results per page.
+      - `direction` (optional string, default: `desc`): Direction of sort (`asc` or `desc`).
+      - `sort` (optional string, default: `created`): Sort field (can be one of: `created`, `comments` or `updated`).
+      - `since` (optional string): Results last updated after the given time (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ.).
+      - `labels` (optional string): Comma separated label names. Example: bug,ui,@high.
+      - `milestone` (optional string): Milestone number.
+      - `assignee` (optional string): Name of assignee user (`*` for all).
+      - `creator` (optional string): The user that created the issue. (`*` for all).
+      - `mentioned` (optional string): A user that's mentioned in the issue.
+
+9.  `get_issue`: Get an issue from a repository.
+
+    - Required inputs:
+      - `owner` (string): The owner of the repository.
+      - `repo` (string): The repository name.
+      - `issue_number` (number): The issue number.
+
+10. `list_repositories_pull_requests`: List pull requests from a repository.
+
+    - Required inputs:
+      - `owner` (string): The owner of the repository.
+      - `repo` (string): The repository name.
+      - `page` (optional number, default: 1): Page number for pagination.
+      - `per_page` (optional number, default: 30, max: 100): Number of results per page.
+      - `direction` (optional string, default: `desc`): Direction of sort (`asc` or `desc`).
+      - `sort` (optional string, default: `created`): Sort field (can be one of: `created`, `popularity`, `long-running` or `updated`).
+      - `head` (optional string): Filter pulls by head user or head organization and branch name in the format of user:ref-name or organization:ref-name (For example: github:new-script-format or octocat:test-branch).
+      - `base` (optional string): Filter pulls by base branch name. (For example: gh-pages).
+
+11. `get_pull_request`: Get a pull request from a repository.
+    - Required inputs:
+      - `owner` (string): The owner of the repository.
+      - `repo` (string): The repository name.
+      - `pull_request_number` (number): The pull request number.
 
 ## Usage examples
 

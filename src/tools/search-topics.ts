@@ -21,7 +21,7 @@ export const searchTopicsInputSchema = z.object({
 
 export const SEARCH_TOPICS_TOOL: Tool = {
   name: "search_topics",
-  description: "Search topics from a repository",
+  description: "Search topics",
   inputSchema: zodToJsonSchema(searchTopicsInputSchema) as Tool["inputSchema"],
 };
 

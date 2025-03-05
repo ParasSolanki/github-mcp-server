@@ -33,7 +33,7 @@ export const searchLabelsInputSchema = z.object({
 
 export const SEARCH_LABELS_TOOL: Tool = {
   name: "search_labels",
-  description: "Search labels from a repository",
+  description: "Search labels in a repository",
   inputSchema: zodToJsonSchema(searchLabelsInputSchema) as Tool["inputSchema"],
 };
 

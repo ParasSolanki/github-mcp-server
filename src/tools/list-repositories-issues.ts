@@ -24,11 +24,11 @@ export const listRepositoriesIssuesInputSchema = z.object({
   sort: z
     .enum(["created", "updated", "comments"])
     .optional()
-    .describe("The sort order of the issues"),
+    .describe("The sort order of the issues, (default: created)"),
   direction: z
     .enum(["asc", "desc"])
     .optional()
-    .describe("The direction of the sort order"),
+    .describe("The direction of the sort order (default: desc)"),
   since: z
     .string()
     .optional()
