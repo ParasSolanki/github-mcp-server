@@ -4,6 +4,8 @@ A [Model Context Protocol](https://github.com/modelcontextprotocol) Server for G
 
 Provides integration with Github through MCP, allowing LLMs to interact with it.
 
+[Github REST Api Docs](https://docs.github.com/en/rest)
+
 ## Installation
 
 ### Manual Installation
