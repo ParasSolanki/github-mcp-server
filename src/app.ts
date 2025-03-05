@@ -18,6 +18,11 @@ import {
   getIssue,
   getIssueInputSchema,
 } from "./tools/get-issue.ts";
+import {
+  GET_PULL_REQUEST_TOOL,
+  getPullRequest,
+  getPullRequestInputSchema,
+} from "./tools/get-pull-request.ts";
 
 const server = new Server(
   {
@@ -34,6 +39,7 @@ const server = new Server(
 export const tools = [
   SEARCH_REPOSITORIES_TOOL,
   GET_ISSUE_TOOL,
+  GET_PULL_REQUEST_TOOL,
 ] satisfies Tool[];
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -84,6 +90,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       const result = await getIssue(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
+
+    if (name === GET_PULL_REQUEST_TOOL.name) {
+      const input = getPullRequestInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await getPullRequest(input.data);
 
       if (result.isErr()) {
         return {
