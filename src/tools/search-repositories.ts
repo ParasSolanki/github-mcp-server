@@ -1,7 +1,8 @@
-import { z, ZodError } from "zod";
-import { env } from "../env.js";
+import { z } from "zod";
 import { gitHubSearchResponseSchema } from "../common/github-schema.js";
-import { GITHUB_API_BASE_URL, USER_AGENT } from "../constants.js";
+import { GITHUB_API_BASE_URL } from "../constants.js";
+import { $githubJson } from "../utils/gh-fetch.ts";
+import { err, ok } from "neverthrow";
 
 export const searchRepositoriesInputSchema = z.object({
   query: z
@@ -24,24 +25,18 @@ export async function searchRepositories(input: SearchRepositoriesInput) {
   url.searchParams.set("page", input.page.toString());
   url.searchParams.set("per_page", input.per_page.toString());
 
+  const json = await $githubJson(url.toString());
+
+  if (json.isErr()) return err(json.error);
+
   try {
-    const response = await fetch(url.toString(), {
-      headers: {
-        Authorization: `Bearer ${env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
-        Accept: "application/vnd.github.v3+json",
-        "Content-Type": "application/json",
-        "User-Agent": USER_AGENT,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to search repositories: ${response.statusText}`);
-    }
-
-    const data = gitHubSearchResponseSchema.parse(await response.json());
-
-    return { error: undefined, data };
+    const data = gitHubSearchResponseSchema.parse(json.value);
+    return ok(data);
   } catch (error) {
-    throw error;
+    return err(
+      new Error(
+        `Failed to parse github search repositories response: ${error}`,
+      ),
+    );
   }
 }

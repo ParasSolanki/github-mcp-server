@@ -10,7 +10,7 @@ import {
   searchRepositories,
   searchRepositoriesInputSchema,
 } from "./tools/search-repositories.js";
-import { SEARCH_REPOSITORIES_TOOL, tools } from "./tool.ts";
+import { SEARCH_REPOSITORIES_TOOL, tools } from "./tool.js";
 import { VERSION } from "./constants.js";
 
 const server = new Server(
@@ -41,12 +41,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       const result = await searchRepositories(input);
 
-      if (result.error) {
-        throw new Error(result.error);
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
       }
 
       return {
-        content: [{ type: "text", text: JSON.stringify(result.data, null, 2) }],
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
       };
     } else {
       throw new Error(`Unknown tool: ${name}`);
