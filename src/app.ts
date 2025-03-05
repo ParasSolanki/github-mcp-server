@@ -53,6 +53,11 @@ import {
   searchCommits,
   searchCommitsInputSchema,
 } from "./tools/search-commits.ts";
+import {
+  SEARCH_TOPICS_TOOL,
+  searchTopics,
+  searchTopicsInputSchema,
+} from "./tools/search-topics.ts";
 
 const server = new Server(
   { name: "Github MCP Server", version: VERSION },
@@ -66,6 +71,7 @@ export const tools = [
   SEARCH_CODE_TOOL,
   SEARCH_USERS_TOOL,
   SEARCH_COMMITS_TOOL,
+  SEARCH_TOPICS_TOOL,
 
   // issues
   GET_ISSUE_TOOL,
@@ -306,6 +312,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       const result = await searchCommits(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
+
+    if (name === SEARCH_TOPICS_TOOL.name) {
+      const input = searchTopicsInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await searchTopics(input.data);
 
       if (result.isErr()) {
         return {
