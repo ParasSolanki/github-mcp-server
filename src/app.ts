@@ -385,6 +385,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
     throw new Error(`Unknown tool: ${name}`);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return {
       isError: true,

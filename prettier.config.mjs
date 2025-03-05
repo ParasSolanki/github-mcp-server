@@ -11,4 +11,4 @@ const config = {
   tabWidth: 2,
 };
 
-module.exports = config;
+export default config;
