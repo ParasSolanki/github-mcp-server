@@ -28,6 +28,11 @@ import {
   listIssues,
   listIssuesInputSchema,
 } from "./tools/list-issues.ts";
+import {
+  LIST_PULL_REQUESTS_TOOL,
+  listPullRequests,
+  listPullRequestsInputSchema,
+} from "./tools/list-pull-requests.ts";
 
 const server = new Server(
   { name: "Github MCP Server", version: VERSION },
@@ -42,6 +47,7 @@ export const tools = [
   LIST_ISSUES_TOOL,
 
   // pull requests
+  LIST_PULL_REQUESTS_TOOL,
   GET_PULL_REQUEST_TOOL,
 ] satisfies Tool[];
 
@@ -145,6 +151,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       const result = await listIssues(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
+
+    if (name === LIST_PULL_REQUESTS_TOOL.name) {
+      const input = listPullRequestsInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await listPullRequests(input.data);
 
       if (result.isErr()) {
         return {
