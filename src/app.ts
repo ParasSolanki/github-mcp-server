@@ -48,6 +48,11 @@ import {
   searchUsers,
   searchUsersInputSchema,
 } from "./tools/search-users.ts";
+import {
+  SEARCH_COMMITS_TOOL,
+  searchCommits,
+  searchCommitsInputSchema,
+} from "./tools/search-commits.ts";
 
 const server = new Server(
   { name: "Github MCP Server", version: VERSION },
@@ -60,6 +65,7 @@ export const tools = [
   SEARCH_ISSUES_TOOL,
   SEARCH_CODE_TOOL,
   SEARCH_USERS_TOOL,
+  SEARCH_COMMITS_TOOL,
 
   // issues
   GET_ISSUE_TOOL,
@@ -289,6 +295,31 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
+    if (name === SEARCH_COMMITS_TOOL.name) {
+      const input = searchCommitsInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await searchCommits(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
     throw new Error(`Unknown tool: ${name}`);
   } catch (error) {
     return {
