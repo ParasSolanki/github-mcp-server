@@ -34,16 +34,32 @@ Provides integration with Github through MCP, allowing LLMs to interact with it.
 ### Tools
 
 1.  `search_repositories`: Search GitHub for a repository.
+
     - Required inputs:
       - `query` (string): The query to search for repository
       - `page` (number, default: 30, max: 100): Page number for pagination
       - `per_page` (number, default: 30, max: 100): Number of results per page
+
+2.  `get_issue`: Get an issue from a repository.
+
+    - Required inputs:
+      - `owner` (string): The owner of the repository
+      - `repo` (string): The repository name
+      - `issue_number` (number): The issue number
+
+3.  `get_pull_request`: Get a pull request from a repository.
+    - Required inputs:
+      - `owner` (string): The owner of the repository
+      - `repo` (string): The repository name
+      - `pull_request_number` (number): The pull request number
 
 ## Usage examples
 
 Some example prompts you can use to interact with Github:
 
 1. "modelcontextprotocol" → execute the `search_repositories` tool to find repositories where modelcontextprotocol mentioned.
+2. "What is the 739 issue on modelcontextprotocol servers repo" → execute the `get_issue` tool to find 739 issue from modelcontextprotocol servers repo.
+3. "What is the 717 PR on modelcontextprotocol servers repo" → execute the `get_pull_request` tool to find 717 PR from modelcontextprotocol servers repo.
 
 ## Development
 
