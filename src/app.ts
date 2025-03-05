@@ -24,15 +24,15 @@ import {
   getPullRequestInputSchema,
 } from "./tools/get-pull-request.ts";
 import {
-  LIST_ISSUES_TOOL,
-  listIssues,
-  listIssuesInputSchema,
-} from "./tools/list-issues.ts";
+  LIST_REPOSITORIES_ISSUES_TOOL,
+  listRepositoriesIssues,
+  listRepositoriesIssuesInputSchema,
+} from "./tools/list-repositories-issues.ts";
 import {
-  LIST_PULL_REQUESTS_TOOL,
-  listPullRequests,
-  listPullRequestsInputSchema,
-} from "./tools/list-pull-requests.ts";
+  LIST_REPOSITORIES_PULL_REQUESTS_TOOL,
+  listRepositoriesPullRequests,
+  listRepositoriesPullRequestsInputSchema,
+} from "./tools/list-repositories-pull-requests.ts";
 import {
   SEARCH_ISSUES_TOOL,
   searchIssues,
@@ -63,10 +63,10 @@ export const tools = [
 
   // issues
   GET_ISSUE_TOOL,
-  LIST_ISSUES_TOOL,
+  LIST_REPOSITORIES_ISSUES_TOOL,
 
   // pull requests
-  LIST_PULL_REQUESTS_TOOL,
+  LIST_REPOSITORIES_PULL_REQUESTS_TOOL,
   GET_PULL_REQUEST_TOOL,
 ] satisfies Tool[];
 
@@ -159,8 +159,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
-    if (name === LIST_ISSUES_TOOL.name) {
-      const input = listIssuesInputSchema.safeParse(args);
+    if (name === LIST_REPOSITORIES_ISSUES_TOOL.name) {
+      const input = listRepositoriesIssuesInputSchema.safeParse(args);
 
       if (!input.success) {
         return {
@@ -169,7 +169,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      const result = await listIssues(input.data);
+      const result = await listRepositoriesIssues(input.data);
 
       if (result.isErr()) {
         return {
@@ -185,8 +185,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       };
     }
 
-    if (name === LIST_PULL_REQUESTS_TOOL.name) {
-      const input = listPullRequestsInputSchema.safeParse(args);
+    if (name === LIST_REPOSITORIES_PULL_REQUESTS_TOOL.name) {
+      const input = listRepositoriesPullRequestsInputSchema.safeParse(args);
 
       if (!input.success) {
         return {
@@ -195,7 +195,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      const result = await listPullRequests(input.data);
+      const result = await listRepositoriesPullRequests(input.data);
 
       if (result.isErr()) {
         return {
@@ -273,7 +273,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      const result = await searchCode(input.data);
+      const result = await searchUsers(input.data);
 
       if (result.isErr()) {
         return {

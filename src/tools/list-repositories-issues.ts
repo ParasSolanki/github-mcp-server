@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GITHUB_API_BASE_URL } from "../constants.js";
+import { GITHUB_API_BASE_URL } from "../constants.ts";
 import { $githubJson } from "../utils/gh-fetch.ts";
 import { err, ok } from "neverthrow";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -7,7 +7,7 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 
 // @see https://docs.github.com/en/rest/issues/issues#list-repository-issues list repository issues API docs
 
-export const listIssuesInputSchema = z.object({
+export const listRepositoriesIssuesInputSchema = z.object({
   owner: z.string().describe("The owner of the repository"),
   repo: z.string().describe("The repository name"),
   state: z
@@ -58,15 +58,21 @@ export const listIssuesInputSchema = z.object({
     .describe("A user that's mentioned in the issue."),
 });
 
-export const LIST_ISSUES_TOOL: Tool = {
-  name: "list_issues",
+export const LIST_REPOSITORIES_ISSUES_TOOL: Tool = {
+  name: "list_repositories_issues",
   description: "List issues from a repository",
-  inputSchema: zodToJsonSchema(listIssuesInputSchema) as Tool["inputSchema"],
+  inputSchema: zodToJsonSchema(
+    listRepositoriesIssuesInputSchema,
+  ) as Tool["inputSchema"],
 };
 
-export type ListIssuesInput = z.output<typeof listIssuesInputSchema>;
+export type ListRepositoriesIssuesInput = z.output<
+  typeof listRepositoriesIssuesInputSchema
+>;
 
-export async function listIssues(input: ListIssuesInput) {
+export async function listRepositoriesIssues(
+  input: ListRepositoriesIssuesInput,
+) {
   const url = new URL(
     `/repos/${input.owner}/${input.repo}/issues`,
     GITHUB_API_BASE_URL,

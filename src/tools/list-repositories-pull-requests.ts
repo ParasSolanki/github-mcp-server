@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GITHUB_API_BASE_URL } from "../constants.js";
+import { GITHUB_API_BASE_URL } from "../constants.ts";
 import { $githubJson } from "../utils/gh-fetch.ts";
 import { err, ok } from "neverthrow";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
@@ -7,7 +7,7 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 
 // @see https://docs.github.com/en/rest/pulls/pulls#list-pull-requests list pull requests API docs
 
-export const listPullRequestsInputSchema = z.object({
+export const listRepositoriesPullRequestsInputSchema = z.object({
   owner: z.string().describe("The owner of the repository"),
   repo: z.string().describe("The repository name"),
   state: z
@@ -45,19 +45,21 @@ export const listPullRequestsInputSchema = z.object({
     .describe("Filter pulls by base branch name. Example: gh-pages."),
 });
 
-export const LIST_PULL_REQUESTS_TOOL: Tool = {
-  name: "list_pull_requests",
+export const LIST_REPOSITORIES_PULL_REQUESTS_TOOL: Tool = {
+  name: "list_repositories_pull_requests",
   description: "List pull requests from a repository",
   inputSchema: zodToJsonSchema(
-    listPullRequestsInputSchema,
+    listRepositoriesPullRequestsInputSchema,
   ) as Tool["inputSchema"],
 };
 
-export type ListPullRequestsInput = z.output<
-  typeof listPullRequestsInputSchema
+export type ListRepositoriesPullRequestsInput = z.output<
+  typeof listRepositoriesPullRequestsInputSchema
 >;
 
-export async function listPullRequests(input: ListPullRequestsInput) {
+export async function listRepositoriesPullRequests(
+  input: ListRepositoriesPullRequestsInput,
+) {
   const url = new URL(
     `/repos/${input.owner}/${input.repo}/pulls`,
     GITHUB_API_BASE_URL,
