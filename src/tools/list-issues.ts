@@ -5,6 +5,8 @@ import { err, ok } from "neverthrow";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
+// @see https://docs.github.com/en/rest/issues/issues#list-repository-issues list repository issues API docs
+
 export const listIssuesInputSchema = z.object({
   owner: z.string().describe("The owner of the repository"),
   repo: z.string().describe("The repository name"),

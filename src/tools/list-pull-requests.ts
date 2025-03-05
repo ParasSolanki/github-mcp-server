@@ -5,6 +5,8 @@ import { err, ok } from "neverthrow";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
+// @see https://docs.github.com/en/rest/pulls/pulls#list-pull-requests list pull requests API docs
+
 export const listPullRequestsInputSchema = z.object({
   owner: z.string().describe("The owner of the repository"),
   repo: z.string().describe("The repository name"),
