@@ -27,7 +27,7 @@
   "scripts": {
     "dev": "dotenvx run -- tsx watch src/app.ts",
     "build": "dotenvx run -f .env.production -- rolldown -c rolldown.config.ts",
-    "inspector": "npx @modelcontextprotocol/inspector dist/app.js",
+    "inspector": "pnpm build && npx @modelcontextprotocol/inspector dist/app.js",
     "lint": "eslint .",
     "format": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ./.gitignore --ignore-unknown --write",
     "format:check": "prettier '**/*.{cjs,mjs,ts,tsx,md,json}' --ignore-path ./.gitignore --ignore-unknown --check"
