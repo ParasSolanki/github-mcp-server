@@ -43,6 +43,11 @@ import {
   searchCode,
   searchCodeInputSchema,
 } from "./tools/search-code.ts";
+import {
+  SEARCH_USERS_TOOL,
+  searchUsers,
+  searchUsersInputSchema,
+} from "./tools/search-users.ts";
 
 const server = new Server(
   { name: "Github MCP Server", version: VERSION },
@@ -54,6 +59,7 @@ export const tools = [
   SEARCH_REPOSITORIES_TOOL,
   SEARCH_ISSUES_TOOL,
   SEARCH_CODE_TOOL,
+  SEARCH_USERS_TOOL,
 
   // issues
   GET_ISSUE_TOOL,
@@ -233,6 +239,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     if (name === SEARCH_CODE_TOOL.name) {
       const input = searchCodeInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await searchCode(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
+
+    if (name === SEARCH_USERS_TOOL.name) {
+      const input = searchUsersInputSchema.safeParse(args);
 
       if (!input.success) {
         return {
