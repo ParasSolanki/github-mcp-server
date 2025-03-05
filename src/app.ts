@@ -2,16 +2,22 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import {
+  SEARCH_REPOSITORIES_TOOL,
   searchRepositories,
   searchRepositoriesInputSchema,
 } from "./tools/search-repositories.js";
-import { SEARCH_REPOSITORIES_TOOL, tools } from "./tool.js";
 import { VERSION } from "./constants.js";
+import {
+  GET_ISSUE_TOOL,
+  getIssue,
+  getIssueInputSchema,
+} from "./tools/get-issue.ts";
 
 const server = new Server(
   {
@@ -25,6 +31,11 @@ const server = new Server(
   },
 );
 
+export const tools = [
+  SEARCH_REPOSITORIES_TOOL,
+  GET_ISSUE_TOOL,
+] satisfies Tool[];
+
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return { tools };
 });
@@ -37,9 +48,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (!args) throw new Error("No arguments provided");
 
     if (name === SEARCH_REPOSITORIES_TOOL.name) {
-      const input = searchRepositoriesInputSchema.parse(args);
+      const input = searchRepositoriesInputSchema.safeParse(args);
 
-      const result = await searchRepositories(input);
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await searchRepositories(input.data);
 
       if (result.isErr()) {
         return {
@@ -53,9 +71,35 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           { type: "text", text: JSON.stringify(result.value, null, 2) },
         ],
       };
-    } else {
-      throw new Error(`Unknown tool: ${name}`);
     }
+
+    if (name === GET_ISSUE_TOOL.name) {
+      const input = getIssueInputSchema.safeParse(args);
+
+      if (!input.success) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "Invalid input" }],
+        };
+      }
+
+      const result = await getIssue(input.data);
+
+      if (result.isErr()) {
+        return {
+          isError: true,
+          content: [{ type: "text", text: "An error occurred" }],
+        };
+      }
+
+      return {
+        content: [
+          { type: "text", text: JSON.stringify(result.value, null, 2) },
+        ],
+      };
+    }
+
+    throw new Error(`Unknown tool: ${name}`);
   } catch (error) {
     return {
       isError: true,
