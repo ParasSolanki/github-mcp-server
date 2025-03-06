@@ -12,9 +12,13 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
 COPY . .
+
 ENV NODE_ENV="production"
 ARG GITHUB_PERSONAL_ACCESS_TOKEN
+ENV GITHUB_PERSONAL_ACCESS_TOKEN=$GITHUB_PERSONAL_ACCESS_TOKEN
+
 RUN pnpm run build
 
 FROM base
